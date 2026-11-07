@@ -1,59 +1,67 @@
 # Tavola
 
-Applicazione in italiano per due piani alimentari personali e una lista della spesa condivisa.
+Un sito in italiano per due piani alimentari personali e un’unica lista della spesa, gratuito e utilizzabile dal telefono. **La versione principale è interamente statica: nessun server applicativo, database cloud o abbonamento.**
 
-## Pubblicare la versione completa
+## Aprire il sito
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ejaubashi/t010)
+La cartella `docs/` contiene il sito già compilato, con fotografie e font inclusi. Può essere servita da qualsiasi hosting statico gratuito.
 
-La configurazione `render.yaml` collega il codice GitHub a un server Node.js con disco persistente da 1 GB, regione Francoforte, controllo di salute e accesso protetto. **Il servizio Starter e il disco sono a pagamento**: verifica e approva i costi mostrati da Render prima di creare il servizio. Nessun servizio viene creato dal semplice caricamento di questo repository.
+- Link gratuito alla build pubblicata su GitHub: https://raw.githack.com/ejaubashi/t010/main/docs/index.html
+- Per usare GitHub Pages direttamente: apri [Settings → Pages](https://github.com/ejaubashi/t010/settings/pages), seleziona **Deploy from a branch**, ramo **main**, cartella **/docs**. Dopo la pubblicazione, il link sarà https://ejaubashi.github.io/t010/ . L’attivazione richiede l’accesso del proprietario a GitHub; il solo push del codice non la garantisce.
+- In alternativa è incluso il workflow manuale `.github/workflows/pages.yml`, utilizzabile dopo aver scelto **GitHub Actions** come sorgente Pages.
 
-1. Apri il pulsante di deploy e accedi al tuo account Render.
-2. Collega GitHub e seleziona questo repository, se richiesto.
-3. Imposta `TAVOLA_ACCESS_PASSWORD` con almeno 12 caratteri nei campi sicuri di Render. Non inserire la password nel codice o in chat.
-4. Controlla i costi e avvia il deploy. Al termine Render assegna un indirizzo HTTPS `…onrender.com`: quello è il link da usare su entrambi i telefoni.
+Il link Githack permette di visualizzare i file statici GitHub senza configurare Pages e dipende dalla disponibilità e dai limiti del servizio esterno. Non è stato possibile verificare il dominio esterno dall’ambiente di sviluppo, che ne blocca l’accesso. Nessuna API o password è inclusa nel sito. Per un uso continuativo è preferibile il dominio GitHub Pages.
 
-All’apertura il browser chiede le credenziali: nome utente **tavola**, password quella impostata su Render. Condividi la password solo con la tua partner. Entrambi usate lo stesso link per sincronizzare la spesa. Il disco conserva il database anche quando l’app viene riavviata o aggiornata. I deploy automatici sono disattivati: gli aggiornamenti successivi si avviano dalla dashboard Render.
+Entrambi potete aprire lo stesso sito e vedere la lista iniziale, calcolata dai due piani di esempio. **Le modifiche ai pasti, i nomi e le spunte sono salvati solo nel browser di ciascun telefono. Non si aggiornano automaticamente sull’altro telefono.** La lista somma sempre i due piani presenti sul dispositivo utilizzato. Cancellare i dati del browser cancella anche le personalizzazioni. La versione statica non carica i dati personali nel repository.
 
-La configurazione è pronta nel repository; questo documento non indica che un servizio sia già stato attivato. **GitHub Pages non può eseguire il server Node.js**, quindi non offre questa versione con sincronizzazione. Non è prevista una sostituzione con dati locali al dispositivo.
-
-Per un altro hosting compatibile è incluso anche un `Dockerfile`. Occorrono Node 24, HTTPS, una singola istanza, un volume persistente montato nella directory `TAVOLA_DATA_DIR` e la variabile segreta `TAVOLA_ACCESS_PASSWORD`. Il controllo di salute pubblico è `/healthz`; pagine, API e aggiornamenti condivisi richiedono la password.
-
-## Avvio
-
-Richiede Node.js 24 o successivo (usa `node:sqlite`).
-
-```sh
-npm install
-npm run dev
-```
-
-Apri http://localhost:3000 sul computer che esegue il server. Questo indirizzo non rende l’app accessibile da altri dispositivi su Internet. Per una build di produzione: `npm run build`, imposta la variabile segreta `TAVOLA_ACCESS_PASSWORD` con almeno 12 caratteri e avvia `npm start`. Nessuna pubblicazione è automatica.
+Per ritrovare il sito rapidamente, usa “Aggiungi alla schermata Home” dal browser del telefono. Il file manifest è incluso; questa versione non garantisce la disponibilità offline dei file del sito.
 
 ## Funzioni
 
-- Due profili modificabili, giorni e pasti separati, porzioni personali.
+- Due profili con calendario, pasti e porzioni individuali.
 - Ricettario con ricerca, preferiti, ingredienti e preparazione.
-- Aggiunta, sostituzione, rimozione dei pasti e registrazione del consumo.
-- Lista della spesa generata da entrambi i piani, per settimana o giorno selezionato.
+- Aggiunta, sostituzione, rimozione e registrazione dei pasti mangiati.
+- Lista unica calcolata dai due piani, per settimana o giorno selezionato.
 - Quantità aggregate per ingrediente e unità; dettaglio dei pasti di provenienza.
-- Articoli extra, acquisti spuntati, ingredienti già in casa e modalità spesa.
-- Database SQLite su disco e aggiornamento delle finestre tramite Server-Sent Events.
-- Interfaccia responsive, dialoghi con gestione del focus e navigazione da tastiera.
+- Articoli extra, spunte, ingredienti già in casa e modalità spesa.
+- Salvataggio locale e aggiornamento delle finestre dello stesso browser.
+- Layout mobile, dialoghi con gestione del focus e navigazione da tastiera.
 
-I dati sono in `.data/tavola.sqlite`, esclusi da Git. `TAVOLA_DATA_DIR` permette di cambiare directory; `PORT` cambia porta. Gli articoli spuntati restano tali quando cambia la quantità: il controllo dell’acquisto rimane esplicito.
+Nomi e piani iniziali sono esempi modificabili; i valori nutrizionali sono indicativi. Le fotografie sono illustrative e generate per questo progetto.
 
-Questa versione rappresenta una singola cucina condivisa. In produzione l’accesso è protetto da una password comune, obbligatoria all’avvio; account individuali e inviti non sono inclusi. In sviluppo locale la password è facoltativa. Due dispositivi devono collegarsi alla stessa istanza del server per condividere i dati. Non utilizzare più istanze con database separati.
+## Sviluppo e build statica
 
-Nomi e piani iniziali sono esempi modificabili. I valori nutrizionali sono indicativi, non prescrizioni. Le fotografie sono illustrative e sono state generate per questo progetto.
+```sh
+npm ci
+npm run dev
+```
+
+L’indirizzo localhost è utilizzabile solo sul computer che esegue l’anteprima. Per pubblicare non serve lasciare acceso questo computer.
+
+```sh
+npm run build        # file statici in dist/
+npm run build:pages  # aggiorna docs/ per la pubblicazione
+```
+
+I percorsi degli asset sono relativi: funziona anche sotto `/t010/` o nel percorso completo del CDN. Nessuna variabile segreta o chiamata `/api` è necessaria per la versione statica.
 
 ## Verifica
 
 ```sh
-npm run build
 npm test
 ```
 
-I test Playwright usano `/usr/bin/chromium`, oppure il percorso impostato in `CHROMIUM_PATH`, e un database separato in `/tmp/tavola-e2e-data`. Prima dei test esegui la build. Coprono isolamento dei profili, aggregazione delle quantità, salvataggio, aggiornamenti tra finestre, ricerca, mobile, validazione degli input, accesso protetto e conservazione dei dati dopo il riavvio di produzione.
+I test Playwright usano `/usr/bin/chromium` oppure il percorso `CHROMIUM_PATH`. Verificano il sito statico senza API, persistenza sul dispositivo, uguaglianza delle liste iniziali tra due dispositivi, isolamento delle spunte, mobile e i flussi della precedente versione con server.
 
-I font DM Sans e Cormorant Garamond sono distribuiti con licenza SIL Open Font License. Icone Lucide: ISC.
+## Versione precedente con server, facoltativa
+
+Il codice Express/SQLite rimane disponibile come alternativa di sviluppo. Non è necessario per il sito statico e non è stato attivato alcun servizio a pagamento.
+
+```sh
+npm run dev:server
+npm run build:server
+```
+
+Per eseguirlo in produzione servono Node 24, la variabile segreta `TAVOLA_ACCESS_PASSWORD` di almeno 12 caratteri e `npm start`. Il client va compilato con `build:server`, che scrive in `dist-server/`. Il database è in `.data/tavola.sqlite`; `TAVOLA_DATA_DIR` cambia directory e `PORT` cambia porta. La versione con server comprende spesa sincronizzata e password comune (utente `tavola`), ma non viene utilizzata dal sito statico. Il `Dockerfile` serve esclusivamente a questa alternativa.
+
+I font DM Sans e Cormorant Garamond sono distribuiti con licenza SIL Open Font License, inclusa in `public/fonts`. Icone Lucide: ISC.

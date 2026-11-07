@@ -4,10 +4,14 @@
   "description": "Due piani alimentari personali e una lista della spesa condivisa, in italiano.",
   "main": "index.js",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "vite --host 0.0.0.0 --port 3000",
     "build": "vite build",
     "start": "NODE_ENV=production node server.js",
-    "test": "playwright test"
+    "test": "npm run build:server && playwright test",
+    "dev:server": "VITE_STORAGE_MODE=server node server.js",
+    "build:server": "VITE_STORAGE_MODE=server vite build --outDir dist-server",
+    "preview": "vite preview --host 0.0.0.0 --port 3000",
+    "build:pages": "vite build --outDir docs"
   },
   "repository": {
     "type": "git",

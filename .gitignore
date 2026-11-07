@@ -1,6 +1,11 @@
 node_modules/
 dist/
+dist-server/
 .data/
 test-results/
 playwright-report/
 *.log
+.dev.vars
+.env
+.env.local
+.wrangler/
