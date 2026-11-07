@@ -22,7 +22,7 @@ export function initialState() {
       plans[person][date] = [index ? 'porridge' : 'yogurt', (dayIndex + index) % 2 ? 'chickpeas' : 'bowl', 'apple', 'salmon'].map((recipe, slot) => ({ id: `${person}-${date}-${slot}`, recipe, slot, portion: index ? 0.85 : 1, eaten: false }));
     }
   }
-  return { profiles: { me: { name: 'Andrea', initial: 'A', description: 'Il mio percorso', target: 2200 }, her: { name: 'Giulia', initial: 'G', description: 'Il suo percorso', target: 1800 } }, plans, checked: {}, manual: [], pantry: {}, favorites: ['bowl', 'salmon'] };
+  return { profiles: { me: { name: 'Endi', initial: 'E', description: 'Il mio percorso', target: 2200 }, her: { name: 'Giulia', initial: 'G', description: 'Il suo percorso', target: 1800 } }, plans, checked: {}, manual: [], pantry: {}, favorites: ['bowl', 'salmon'] };
 }
 export const groceryKey = (name, unit) => `${name.toLocaleLowerCase('it')}|${unit}`;
 export function groceriesFor(state, dates) {

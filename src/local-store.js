@@ -7,7 +7,15 @@ const CHANGE_EVENT = 'tavola-data-change';
 export function readLocalState() {
   const content = localStorage.getItem(STORAGE_KEY);
   if (content) {
-    try {return JSON.parse(content);}
+    try {
+      const state = JSON.parse(content);
+      if (state.profiles?.me?.name === 'Andrea') {
+        state.profiles.me.name = 'Endi';
+        state.profiles.me.initial = 'E';
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+      return state;
+    }
     catch {throw new Error('I dati salvati non sono leggibili. Puoi ripristinare una copia dalle impostazioni.');}
   }
   const state = initialState();
