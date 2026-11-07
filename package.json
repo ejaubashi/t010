@@ -1,7 +1,7 @@
 {
   "name": "tavola",
   "version": "1.0.0",
-  "description": "",
+  "description": "Due piani alimentari personali e una lista della spesa condivisa, in italiano.",
   "main": "index.js",
   "scripts": {
     "dev": "node server.js",
@@ -31,5 +31,8 @@
     "@playwright/test": "^1.65.0",
     "@vitejs/plugin-react": "^6.2.1",
     "vite": "^8.3.6"
+  },
+  "engines": {
+    "node": ">=24 <25"
   }
 }
