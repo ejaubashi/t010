@@ -1,4 +1,5 @@
 import {recipes} from './data.js';
+import {updateProfile, sessionFor} from './profile.js';
 
 export function applyAction(s, action) {
   const {type, ...p} = action;
@@ -23,6 +24,15 @@ export function applyAction(s, action) {
       case 'removeMeal': {const list = plan(); s.plans[p.person][p.date] = list.filter(m => m.id !== p.id); break;}
       case 'favorite': if(!recipes.some(r=>r.id===p.id)) throw Error('Ricetta non valida.'); s.favorites = s.favorites.includes(p.id) ? s.favorites.filter(id=>id!==p.id) : [...s.favorites,p.id]; break;
       case 'profile': person(); if (!String(p.name || '').trim() || !Number.isFinite(Number(p.target)) || Number(p.target) < 500 || Number(p.target) > 6000) throw Error('Inserisci un nome e un obiettivo tra 500 e 6.000 kcal.'); s.profiles[p.person] = {...s.profiles[p.person], name: p.name.trim().slice(0,40), initial: p.name.trim()[0].toUpperCase(), target: Number(p.target)}; break;
+      case 'profileSection': person(); s.profiles[p.person] = updateProfile(s.profiles[p.person], p.section, p.values); break;
+      case 'workout': {
+        person();
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(p.date) || !sessionFor(s.profiles[p.person], p.date)) throw Error('Nessun allenamento previsto per questa data.');
+        s.completedWorkouts ||= {};
+        const key = `${p.person}:${p.date}`;
+        s.completedWorkouts[key] = !s.completedWorkouts[key];
+        break;
+      }
       default: throw Error('Azione non riconosciuta.');
     }
   return s;

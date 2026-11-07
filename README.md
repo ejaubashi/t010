@@ -18,6 +18,11 @@ Per ritrovare il sito rapidamente, usa “Aggiungi alla schermata Home” dal br
 
 ## Funzioni
 
+- Navigazione distinta: **Panoramica** (riepilogo), **Piano alimentare** (calendario e ricettario), **Spesa**, **Allenamento** e **Profili**.
+- Nei profili: dati personali con peso attuale, peso obiettivo, altezza, età, attività quotidiana e obiettivo; lo storico registra il peso al salvataggio, con una registrazione per giorno.
+- Preferenze con stile alimentare, allergie/intolleranze, alimenti da evitare e preferiti, tempo disponibile in cucina. Le note sulle allergie compaiono nella scelta dei pasti; gli abbinamenti testuali agli alimenti da evitare sono promemoria, non un controllo allergeni automatico.
+- Obiettivi del piano alimentare: calorie, proteine, carboidrati, grassi, acqua e indicazioni personali, richiamati nel riepilogo del piano.
+- Programma di allenamento settimanale per ciascun profilo: obiettivo, esperienza, giorni, durata, esercizi e note. Nella pagina Allenamento si registrano le sessioni completate, separatamente per persona e data.
 - Due profili con calendario, pasti e porzioni individuali.
 - Ricettario con ricerca, preferiti, ingredienti e preparazione.
 - Aggiunta, sostituzione, rimozione e registrazione dei pasti mangiati.

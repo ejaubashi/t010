@@ -4,7 +4,7 @@ import {dateKey,addDays,groceriesFor,recipeById,groceryKey} from '../src/data.js
 test('pasti separati, porzioni aggregate e salvataggio dopo il ricaricamento',async({page,request})=>{
   const date=addDays(dateKey(new Date()),35);
   await page.goto('/');
-  await page.getByRole('button',{name:'Piani alimentari',exact:true}).click();
+  await page.getByRole('button',{name:'Piano alimentare',exact:true}).click();
   await page.getByRole('button',{name:'Aggiungi pasto',exact:true}).click();
   const dialog=page.getByRole('dialog');
   await dialog.getByLabel('Giorno',{exact:true}).fill(date);
@@ -30,7 +30,7 @@ test('pasti separati, porzioni aggregate e salvataggio dopo il ricaricamento',as
 test('la spesa si aggiorna tra due finestre e conserva gli acquisti',async({browser,request})=>{
   const context=await browser.newContext();const a=await context.newPage();const b=await context.newPage();
   await Promise.all([a.goto('/'),b.goto('/')]);
-  for(const p of [a,b])await p.getByRole('button',{name:'Lista della spesa',exact:true}).click();
+  for(const p of [a,b])await p.getByRole('button',{name:'Spesa',exact:true}).click();
   await a.getByRole('button',{name:'Aggiungi articolo'}).click();
   const name=`Caffè prova ${Date.now()}`;
   const dialog=a.getByRole('dialog');await dialog.getByLabel('Nome dell’articolo').fill(name);
@@ -38,7 +38,7 @@ test('la spesa si aggiorna tra due finestre e conserva gli acquisti',async({brow
   const checkbox=b.getByRole('checkbox',{name:`Acquistato: ${name}`,exact:true});
   await expect(checkbox).toBeVisible();await checkbox.click();
   await expect(a.getByRole('checkbox',{name:`Acquistato: ${name}`,exact:true})).toHaveAttribute('aria-checked','true');
-  await a.reload();await a.getByRole('button',{name:'Lista della spesa',exact:true}).click();
+  await a.reload();await a.getByRole('button',{name:'Spesa',exact:true}).click();
   await expect(a.getByRole('checkbox',{name:`Acquistato: ${name}`,exact:true})).toHaveAttribute('aria-checked','true');
   await a.getByRole('button',{name:`Elimina ${name}`,exact:true}).click();await expect(checkbox).not.toBeVisible();
   await context.close();
@@ -46,7 +46,7 @@ test('la spesa si aggiorna tra due finestre e conserva gli acquisti',async({brow
 
 test('segnare un pasto cambia solo il profilo scelto',async({page,request})=>{
   const before=await(await request.get('/api/state')).json();const today=dateKey(new Date());
-  await page.goto('/');await page.getByRole('button',{name:'Segna come mangiato',exact:true}).first().click();
+  await page.goto('/');await page.getByRole('button',{name:'Piano alimentare',exact:true}).click();await page.getByRole('button',{name:'Segna mangiato',exact:true}).first().click();
   await expect(page.getByRole('button',{name:'Mangiato',exact:true}).first()).toBeVisible();
   const after=await(await request.get('/api/state')).json();
   expect(after.plans.her[today]).toEqual(before.plans.her[today]);
@@ -58,18 +58,17 @@ test('segnare un pasto cambia solo il profilo scelto',async({page,request})=>{
 test('ricerca ricette, dialogo accessibile e menu mobile senza overflow',async({page})=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.setViewportSize({width:390,height:844});await page.goto('/');
-  await page.getByRole('button',{name:'Apri menu'}).click();
+  await page.getByRole('button',{name:'Piano alimentare',exact:true}).click();
   await page.getByRole('button',{name:'Ricettario',exact:true}).click();
   await page.getByRole('textbox',{name:'Cerca una ricetta'}).fill('inesistente');
-  await expect(page.getByRole('heading',{name:'Nessuna ricetta trovata.'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Nessuna ricetta trovata'})).toBeVisible();
   await page.getByRole('textbox',{name:'Cerca una ricetta'}).fill('Salmone');
   await expect(page.locator('.recipe-card')).toHaveCount(1);
   await page.locator('.recipe-card .meal-title').click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).not.toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth)).toBe(false);
-  for(const label of ['La nostra giornata','Piani alimentari','Lista della spesa','Impostazioni']){
-    await page.getByRole('button',{name:'Apri menu'}).click();
+  for(const label of ['Panoramica','Piano alimentare','Spesa','Allenamento','Profili']){
     await page.locator('.sidebar').getByRole('button',{name:label,exact:true}).click();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth)).toBe(false);
   }
@@ -80,4 +79,15 @@ test('il server rifiuta porzioni e articoli non validi',async({request})=>{
   for(const data of [{type:'meal',person:'me',date:dateKey(new Date()),recipe:'bowl',slot:1,portion:-1},{type:'addGrocery',name:'',amount:1,unit:'g'},{type:'profile',person:'her',name:'Giulia',target:0}]){
     const response=await request.post('/api/action',{data});expect(response.status()).toBe(400);
   }
+});
+
+test('un profilo non valido non sovrascrive i dati già salvati',async({request})=>{
+  const before=await(await request.get('/api/state')).json();
+  const invalid=[
+    {type:'profileSection',person:'me',section:'body',values:{name:'Endi',weight:-5,goal:'Benessere',activity:'Moderata'}},
+    {type:'profileSection',person:'me',section:'training',values:{goal:'Forza',level:'Intermedio',sessions:[{day:0,name:'Forza',duration:45},{day:0,name:'Corsa',duration:30}]}},
+  ];
+  for(const data of invalid)expect((await request.post('/api/action',{data})).status()).toBe(400);
+  const after=await(await request.get('/api/state')).json();
+  expect(after.profiles).toEqual(before.profiles);
 });
